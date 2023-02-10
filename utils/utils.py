@@ -82,3 +82,38 @@ def show_misclassified_images(model, test_loader, classes, device):
     plt.show()
 
     return torch.from_numpy(np.array([mi['image'].cpu().numpy().squeeze() for mi in misclassified_images])), [mi['predicted_class'] for mi in misclassified_images]
+
+
+def show_losses_and_accuracies(trainer, tester, epochs):
+    fig, ax = plt.subplots(2, 2)
+
+    train_epoch_loss_linspace = np.linspace(0, epochs, len(trainer.train_losses))
+    test_epoch_loss_linspace = np.linspace(0, epochs, len(tester.test_losses))
+    train_epoch_acc_linspace = np.linspace(0, epochs, len(trainer.train_accuracies))
+    test_epoch_acc_linspace = np.linspace(0, epochs, len(tester.test_accuracies))
+
+    ax[0][0].set_xlabel('Epoch')
+    ax[0][0].set_ylabel('Train Loss')
+    ax[0][0].plot(train_epoch_loss_linspace, trainer.train_losses)
+    ax[0][0].tick_params(axis='y', labelleft=True, labelright=True)
+
+    ax[0][1].set_xlabel('Epoch')
+    ax[0][1].set_ylabel('Test Loss')
+    ax[0][1].plot(test_epoch_loss_linspace, tester.test_losses)
+    ax[0][1].tick_params(axis='y', labelleft=True, labelright=True)
+
+    ax[1][0].set_xlabel('Epoch')
+    ax[1][0].set_ylabel('Train Accuracy')
+    ax[1][0].plot(train_epoch_acc_linspace, trainer.train_accuracies)
+    ax[1][0].tick_params(axis='y', labelleft=True, labelright=True)
+    ax[1][0].yaxis.set_ticks(np.arange(0, 101, 5))
+
+    ax[1][1].set_xlabel('Epoch')
+    ax[1][1].set_ylabel('Test Accuracy')
+    ax[1][1].plot(test_epoch_acc_linspace, tester.test_accuracies)
+    ax[1][1].tick_params(axis='y', labelleft=True, labelright=True)
+    ax[1][1].yaxis.set_ticks(np.arange(0, 101, 5))
+
+    fig.set_size_inches(28, 18)
+    plt.tight_layout()
+    plt.show()
