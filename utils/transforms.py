@@ -20,10 +20,10 @@ class Transforms:
                         Sequential([
                             PadIfNeeded(min_height=40, min_width=40, always_apply=True),  # padding of 4 on each side of 32x32 image
                             RandomCrop(height=32, width=32, always_apply=True),
-                        ], p=0.5),
+                        ], p=1),
                         Sequential([
                             CoarseDropout(max_height=16, max_width=16, min_height=16, min_width=16, min_holes=1, max_holes=1, fill_value=means, always_apply=True),
-                        ], p=0.5)
+                        ], p=1)
                     ], p=1),  # Always apply at least one of the above transformations.
                     Normalize(mean=means, std=stds, always_apply=True),
                     ToTensorV2(),
