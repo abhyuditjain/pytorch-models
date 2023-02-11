@@ -116,3 +116,13 @@ def get_module_by_name(module: Union[torch.Tensor, nn.Module],
     """
     names = access_string.split(sep='.')
     return reduce(getattr, names, module)
+
+
+def get_device():
+    """
+    Returns True, torch.device("cuda") if GPU is available
+    else returns false, torch.device("cpu")
+    """
+    is_cuda_available = torch.cuda.is_available()
+    device = torch.device("cuda" if is_cuda_available else "cpu")
+    return is_cuda_available, device

@@ -1,12 +1,12 @@
 from torchinfo import summary
 
 
-def print_summary(model):
-    batch_size = 20
-    summary(
+def print_summary(model, device, input_size, batch_size=20):
+    model = model.to(device=device)
+    s = summary(
         model,
-        input_size=(batch_size, 3, 32, 32),
-        verbose=1,
+        input_size=(batch_size, *input_size),
+        verbose=0,
         col_names=[
             "kernel_size",
             "input_size",
@@ -17,3 +17,5 @@ def print_summary(model):
         ],
         row_settings=["var_names"],
     )
+
+    print(s)
