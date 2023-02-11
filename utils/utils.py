@@ -103,7 +103,7 @@ def show_losses_and_accuracies(trainer, tester, epochs):
     ax[1][1].tick_params(axis='y', labelleft=True, labelright=True)
     ax[1][1].yaxis.set_ticks(np.arange(0, 101, 5))
 
-    fig.set_size_inches(20, 15)
+    fig.set_size_inches(30, 10)
     plt.tight_layout()
     plt.show()
 
