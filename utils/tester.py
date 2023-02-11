@@ -52,12 +52,12 @@ class Tester:
 
                 output = model(data)
 
-                _, predictions = torch.max(output, 1)
+                _, preds = torch.max(output, 1)
 
-                for i in range(len(predictions)):
-                    if predictions[i] != target[i]:
+                for i in range(len(preds)):
+                    if preds[i] != target[i]:
                         images.append(data[i])
-                        predictions.append(predictions[i])
+                        predictions.append(preds[i])
                         labels.append(target[i])
 
         return images, predictions, labels
