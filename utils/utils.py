@@ -3,9 +3,15 @@ from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from pytorch_grad_cam.utils.image import show_cam_on_image
 import numpy as np
+from functools import reduce
+from typing import Union
+import torch
+from torch import nn
 
-def show_grad_cam(model, device, images, predictions, use_cuda=True):
-    target_layers = [model.layer3[-2]]
+
+def show_grad_cam(model, device, images, predictions, target_layer, use_cuda=True):
+    target_layers = [get_module_by_name(model, target_layer)]
+
     cam = GradCAM(model=model, target_layers=target_layers, use_cuda=use_cuda)
 
     fig = plt.figure(figsize=(40, 40))
@@ -98,3 +104,13 @@ def show_losses_and_accuracies(trainer, tester, epochs):
     fig.set_size_inches(20, 15)
     plt.tight_layout()
     plt.show()
+
+
+def get_module_by_name(module: Union[torch.Tensor, nn.Module],
+                       access_string: str):
+    """Retrieve a module nested in another by its access string.
+
+    Works even when there is a Sequential in the module.
+    """
+    names = access_string.split(sep='.')
+    return reduce(getattr, names, module)
