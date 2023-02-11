@@ -23,10 +23,12 @@ def show_grad_cam(model, device, images, predictions, target_layer, use_cuda=Tru
         grayscale_cam = cam(input_tensor=input_tensor, targets=targets)
         grayscale_cam = grayscale_cam[0, :]
         visualization = show_cam_on_image(rgb_img, grayscale_cam, use_rgb=True)
-        fig.add_subplot(2, 10, i + 1)
+        fig.add_subplot(2, len(images), i + 1)
         plt.imshow(rgb_img, cmap="gray")
-        fig.add_subplot(2, 10, i + 1 + 10)
+        fig.add_subplot(2, len(images), i + 1 + len(images))
         plt.imshow(visualization, cmap="gray")
+
+    fig.set_size_inches(3 * len(images), 4 * 2)
     plt.tight_layout()
     plt.show()
 
