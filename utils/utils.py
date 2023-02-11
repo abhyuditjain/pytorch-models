@@ -9,13 +9,23 @@ import torch
 from torch import nn
 
 
-def show_grad_cam(model, device, images, predictions, target_layer, use_cuda=True):
+def show_grad_cam(model, device, images, labels, predictions, target_layer, classes, use_cuda=True):
+    """
+    model = model,
+    device = device,
+    images = input images
+    labels = correct classes for the images
+    predictions = predictions for the images. If the desired gradcam is for the correct classes, pass labels here.
+    target_layer = string representation of layer e.g. "layer3.1.conv2"
+    classes = list of class labels
+    """
     target_layers = [get_module_by_name(model, target_layer)]
 
     cam = GradCAM(model=model, target_layers=target_layers, use_cuda=use_cuda)
 
-    fig = plt.figure(figsize=(40, 40))
+    fig = plt.figure(figsize=(32, 32))
 
+    plot_idx = 1
     for i in range(len(images)):
         input_tensor = images[i].unsqueeze(0).to(device)
         targets = [ClassifierOutputTarget(predictions[i])]
@@ -23,12 +33,23 @@ def show_grad_cam(model, device, images, predictions, target_layer, use_cuda=Tru
         grayscale_cam = cam(input_tensor=input_tensor, targets=targets)
         grayscale_cam = grayscale_cam[0, :]
         visualization = show_cam_on_image(rgb_img, grayscale_cam, use_rgb=True)
-        fig.add_subplot(2, len(images), i + 1)
-        plt.imshow(rgb_img, cmap="gray")
-        fig.add_subplot(2, len(images), i + 1 + len(images))
-        plt.imshow(visualization, cmap="gray")
 
-    fig.set_size_inches(3 * len(images), 4 * 2)
+        # Layout = 6 images per row - 2 * (original image, gradcam and visualization)
+        ax = fig.add_subplot(len(images)/2, 6, plot_idx, xticks=[], yticks=[])
+        ax.imshow(rgb_img, cmap="gray")
+        ax.set_title("True class: {}".format(classes[labels[i]]))
+        plot_idx += 1
+
+        ax = fig.add_subplot(len(images)/2, 6, plot_idx, xticks=[], yticks=[])
+        ax.imshow(grayscale_cam, cmap="gray")
+        ax.set_title("GradCAM Output\nTarget class: {}".format(classes[predictions[i]]))
+        plot_idx += 1
+
+        ax = fig.add_subplot(len(images)/2, 6, plot_idx, xticks=[], yticks=[])
+        ax.imshow(visualization, cmap="gray")
+        ax.set_title("Visualization\nTarget class: {}".format(classes[predictions[i]]))
+        plot_idx += 1
+
     plt.tight_layout()
     plt.show()
 
