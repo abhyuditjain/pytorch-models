@@ -2,21 +2,25 @@ import torch
 
 
 class Tester:
-    def __init__(self) -> None:
+    def __init__(self, model, test_loader, criterion, device) -> None:
         self.test_losses = []
         self.test_accuracies = []
+        self.model = model
+        self.test_loader = test_loader
+        self.criterion = criterion
+        self.device = device
 
-    def test(self, model, dataloader, criterion, device):
-        model.eval()
+    def test(self):
+        self.model.eval()
 
         test_loss = 0
         correct = 0
 
         with torch.no_grad():
-            for inputs, targets in dataloader:
-                inputs, targets = inputs.to(device), targets.to(device)
-                output = model(inputs)
-                loss = criterion(output, targets)
+            for inputs, targets in self.test_loader:
+                inputs, targets = inputs.to(self.device), targets.to(self.device)
+                output = self.model(inputs)
+                loss = self.criterion(output, targets)
 
                 test_loss += loss.item()
 
@@ -25,32 +29,32 @@ class Tester:
                 )  # get the index of the max log-probability
                 correct += pred.eq(targets.view_as(pred)).sum().item()
 
-        test_loss /= len(dataloader.dataset)
+        test_loss /= len(self.test_loader.dataset)
         self.test_losses.append(test_loss)
 
         print(
             "Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n".format(
                 test_loss,
                 correct,
-                len(dataloader.dataset),
-                100.0 * correct / len(dataloader.dataset),
+                len(self.test_loader.dataset),
+                100.0 * correct / len(self.test_loader.dataset),
             )
         )
 
-        self.test_accuracies.append(100.0 * correct / len(dataloader.dataset))
+        self.test_accuracies.append(100.0 * correct / len(self.test_loader.dataset))
 
-    def get_misclassified_images(self, model, test_loader, device):
-        model.eval()
+    def get_misclassified_images(self):
+        self.model.eval()
 
         images = []
         predictions = []
         labels = []
 
         with torch.no_grad():
-            for data, target in test_loader:
-                data, target = data.to(device), target.to(device)
+            for data, target in self.test_loader:
+                data, target = data.to(self.device), target.to(self.device)
 
-                output = model(data)
+                output = self.model(data)
 
                 _, preds = torch.max(output, 1)
 
