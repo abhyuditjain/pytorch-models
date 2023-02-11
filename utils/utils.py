@@ -3,11 +3,8 @@ from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from pytorch_grad_cam.utils.image import show_cam_on_image
 import numpy as np
-import torch
-
 
 def show_grad_cam(model, device, images, predictions, use_cuda=True):
-
     target_layers = [model.layer3[-2]]
     cam = GradCAM(model=model, target_layers=target_layers, use_cuda=use_cuda)
 
@@ -54,34 +51,18 @@ def show_training_images(train_loader, count, classes):
     plt.show()
 
 
-def show_misclassified_images(model, test_loader, classes, device):
-    model.eval()
-
-    misclassified_images = []
-
-    with torch.no_grad():
-        for data, target in test_loader:
-            data, target = data.to(device), target.to(device)
-            output = model(data)
-            _, pred = torch.max(output, 1)
-            for i in range(len(pred)):
-                if pred[i] != target[i]:
-                    misclassified_images.append({'image': data[i], 'predicted_class': pred[i], 'correct_class': target[i]})
-
-    # Plot the misclassified images
+def show_misclassified_images(images, predictions, labels, classes):
     fig = plt.figure(figsize=(20, 10))
-    for i in range(20):
-        sub = fig.add_subplot(4, 5, i+1)
-        misclassified_image = misclassified_images[i]
-        npimg = denormalize(misclassified_image['image'].cpu().numpy().squeeze())
+    for i in range(len(images)):
+        sub = fig.add_subplot(len(images) / 5, 5, i+1)
+        image = images[i]
+        npimg = denormalize(image.cpu().numpy().squeeze())
         plt.imshow(npimg, cmap="gray")
-        correct = classes[misclassified_image['correct_class']]
-        predicted = classes[misclassified_image['predicted_class']]
+        predicted = classes[predictions[i]]
+        correct = classes[labels[i]]
         sub.set_title("Correct class: {}\nPredicted class: {}".format(correct, predicted))
     plt.tight_layout()
     plt.show()
-
-    return torch.from_numpy(np.array([mi['image'].cpu().numpy().squeeze() for mi in misclassified_images])), [mi['predicted_class'] for mi in misclassified_images]
 
 
 def show_losses_and_accuracies(trainer, tester, epochs):
@@ -114,6 +95,6 @@ def show_losses_and_accuracies(trainer, tester, epochs):
     ax[1][1].tick_params(axis='y', labelleft=True, labelright=True)
     ax[1][1].yaxis.set_ticks(np.arange(0, 101, 5))
 
-    fig.set_size_inches(28, 18)
+    fig.set_size_inches(20, 15)
     plt.tight_layout()
     plt.show()

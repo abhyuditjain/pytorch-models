@@ -38,3 +38,26 @@ class Tester:
         )
 
         self.test_accuracies.append(100.0 * correct / len(dataloader.dataset))
+
+    def get_misclassified_images(self, model, test_loader, device):
+        model.eval()
+
+        images = []
+        predictions = []
+        labels = []
+
+        with torch.no_grad():
+            for data, target in test_loader:
+                data, target = data.to(device), target.to(device)
+
+                output = model(data)
+
+                _, predictions = torch.max(output, 1)
+
+                for i in range(len(predictions)):
+                    if predictions[i] != target[i]:
+                        images.append(data[i])
+                        predictions.append(predictions[i])
+                        labels.append(target[i])
+
+        return images, predictions, labels
