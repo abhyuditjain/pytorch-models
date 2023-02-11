@@ -16,8 +16,8 @@ class Cifar10DataLoader:
             self.dataloader_args["pin_memory"] = True
 
         self.classes = (
-            "plane",
-            "car",
+            "airplane",
+            "automobile",
             "bird",
             "cat",
             "deer",
