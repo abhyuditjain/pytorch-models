@@ -61,9 +61,9 @@ def train_model(trainer, tester, NUM_EPOCHS, use_l1=False, scheduler=None, save_
         return trainer.model, (trainer.train_accuracies, trainer.train_losses, tester.test_accuracies, tester.test_losses)
 
 
-def get_lr(model, train_loader, optimizer, criterion, device, end_lr=10, num_iter=200, start_lr=None, diverge_th=5):
+def get_lr(model, train_loader, optimizer, criterion, device, end_lr=10, num_iter=200, step_mode='exp', start_lr=None, diverge_th=5):
     lr_finder = LRFinder(model, optimizer, criterion, device=device)
-    lr_finder.range_test(train_loader, end_lr=end_lr, num_iter=num_iter, start_lr=start_lr, diverge_th=diverge_th)
+    lr_finder.range_test(train_loader, end_lr=end_lr, num_iter=num_iter, step_mode=step_mode, start_lr=start_lr, diverge_th=diverge_th)
     lr_finder.plot()
     min_loss = min(lr_finder.history['loss'])
     max_lr = lr_finder.history['lr'][np.argmin(lr_finder.history['loss'], axis=0)]
