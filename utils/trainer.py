@@ -6,7 +6,7 @@ class Trainer:
         self.train_losses = []
         self.train_accuracies = []
         self.epoch_train_accuracies = []
-        self.model = model
+        self.model = model.to(device)
         self.train_loader = train_loader
         self.optimizer = optimizer
         self.criterion = criterion

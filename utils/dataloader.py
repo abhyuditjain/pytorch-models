@@ -5,7 +5,7 @@ import numpy as np
 
 
 class Cifar10DataLoader:
-    def __init__(self, batch_size=128, is_cuda_available=False) -> None:
+    def __init__(self, transforms, batch_size=128, is_cuda_available=False) -> None:
         self.batch_size = batch_size
         self.dataloader_args = {"shuffle": True, "batch_size": self.batch_size}
         self.means = [0.4914, 0.4822, 0.4465]
@@ -28,11 +28,13 @@ class Cifar10DataLoader:
             "truck",
         )
 
+        self.transforms = transforms
+
     def get_dataset(self, train=True):
         return datasets.CIFAR10(
             "./data",
             train=train,
-            transform=Transforms(self.means, self.stds, train),
+            transform=self.transforms(self.means, self.stds, train),
             download=True,
         )
 

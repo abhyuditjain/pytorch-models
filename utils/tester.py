@@ -5,7 +5,7 @@ class Tester:
     def __init__(self, model, test_loader, criterion, device) -> None:
         self.test_losses = []
         self.test_accuracies = []
-        self.model = model
+        self.model = model.to(device)
         self.test_loader = test_loader
         self.criterion = criterion
         self.device = device
