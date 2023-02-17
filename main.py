@@ -38,8 +38,6 @@ def train_model(trainer, tester, NUM_EPOCHS, use_l1=False, scheduler=None, save_
         save_path = 'model.pt'
 
     for epoch in range(1, NUM_EPOCHS+1):
-        print("EPOCH: {} (LR: {})".format(epoch, trainer.optimizer.param_groups[0]['lr']))
-
         trainer.train(epoch, scheduler)
         _, test_loss = tester.test()
 
@@ -88,7 +86,7 @@ if __name__ == "__main__":
     train_loader = cifar10.get_loader(True)
     test_loader = cifar10.get_loader(False)
 
-    optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
     criterion = nn.CrossEntropyLoss()
 
     min_loss, max_lr = get_lr(model_exp, train_loader, optimizer, criterion, device)
@@ -111,4 +109,4 @@ if __name__ == "__main__":
     trainer = Trainer(model, train_loader, optimizer, criterion, device)
     tester = Tester(model, test_loader, criterion, device)
 
-    train_model(trainer, tester, NUM_EPOCHS=24, scheduler=scheduler, save_best=True)
+    train_model(trainer, tester, NUM_EPOCHS=24, scheduler=scheduler)

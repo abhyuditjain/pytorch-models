@@ -60,7 +60,7 @@ class Trainer:
             processed += len(inputs)
 
             pbar.set_description(
-                desc=f"Loss = {loss.item():3.2f} | Batch = {batch_id} | Accuracy = {100*correct/processed:0.2f}"
+                desc=f"EPOCH = {epoch} | LR = {self.optimizer.param_groups[0]['lr']} | Loss = {loss.item():3.2f} | Batch = {batch_id} | Accuracy = {100*correct/processed:0.2f}"
             )
             self.train_accuracies.append(100 * correct / processed)
 
