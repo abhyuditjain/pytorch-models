@@ -147,3 +147,18 @@ def get_device():
     is_cuda_available = torch.cuda.is_available()
     device = torch.device("cuda" if is_cuda_available else "cpu")
     return is_cuda_available, device
+
+
+def show_lr_history(trainer, epochs):
+    fig, ax = plt.subplots()
+
+    linspace = np.linspace(0, epochs, len(trainer.lr_history))
+
+    ax.set_xlabel('Epoch')
+    ax.set_ylabel('Learning Rate')
+    ax.plot(linspace, trainer.lr_history)
+    ax.tick_params(axis='y', labelleft=True, labelright=True)
+
+    # fig.set_size_inches(30, 10)
+    plt.tight_layout()
+    plt.show()
