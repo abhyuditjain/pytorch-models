@@ -43,6 +43,8 @@ class Tester:
 
         self.test_accuracies.append(100.0 * correct / len(self.test_loader.dataset))
 
+        return 100. * correct / len(self.test_loader.dataset), test_loss
+
     def get_misclassified_images(self):
         self.model.eval()
 
