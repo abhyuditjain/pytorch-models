@@ -51,9 +51,9 @@ def train_model(trainer, tester, NUM_EPOCHS, use_l1=False, scheduler=None, save_
                 save_model(trainer.model, epoch, trainer.optimizer, save_path)
                 min_val_loss = test_loss
             else:
-                print(f'Valid loss did not inprove from {min_val_loss:.5f}\n')
-        else:
-            print()
+                print(f'Valid loss did not inprove from {min_val_loss:.5f}')
+
+        print()
 
     if scheduler:
         return trainer.model, (trainer.train_accuracies, trainer.train_losses, tester.test_accuracies, tester.test_losses, trainer.lr_history)

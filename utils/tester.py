@@ -33,7 +33,7 @@ class Tester:
         self.test_losses.append(test_loss)
 
         print(
-            "Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n".format(
+            "Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)".format(
                 test_loss,
                 correct,
                 len(self.test_loader.dataset),
