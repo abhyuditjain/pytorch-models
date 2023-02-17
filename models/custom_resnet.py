@@ -75,8 +75,8 @@ class CustomResNet(nn.Module):
 
         self.layer_3 = CustomBlock(in_channels=256, out_channels=512)
 
-        self.gap = nn.Sequential(
-            nn.AvgPool2d(kernel_size=4)
+        self.max_pool = nn.Sequential(
+            nn.MaxPool2d(kernel_size=4)
         )
 
         self.fc = nn.Linear(512, num_classes)
@@ -86,7 +86,7 @@ class CustomResNet(nn.Module):
         x = self.layer_1(x)
         x = self.layer_2(x)
         x = self.layer_3(x)
-        x = self.gap(x)
+        x = self.max_pool(x)
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         return x
