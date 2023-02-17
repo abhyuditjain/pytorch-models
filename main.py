@@ -73,7 +73,7 @@ def get_lr(model, train_loader, optimizer, criterion, device):
     return min_loss, max_lr
 
 
-if __name__ == "__main__":
+def run():
     is_cuda_available, device = get_device()
     cifar10 = Cifar10DataLoader(CustomResnetTransforms, 512, is_cuda_available)
 
@@ -110,3 +110,7 @@ if __name__ == "__main__":
     tester = Tester(model, test_loader, criterion, device)
 
     train_model(trainer, tester, NUM_EPOCHS=24, scheduler=scheduler)
+
+
+if __name__ == "__main__":
+    run()
