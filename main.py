@@ -70,6 +70,9 @@ def get_lr(model, train_loader, optimizer, criterion, device):
 
     print("Min Loss = {}, Max LR = {}".format(min_loss, max_lr))
 
+    # Reset the model and optimizer to initial state
+    lr_finder.reset()
+
     return min_loss, max_lr
 
 
@@ -77,11 +80,9 @@ def run():
     is_cuda_available, device = get_device()
     cifar10 = Cifar10DataLoader(CustomResnetTransforms, 512, is_cuda_available)
 
+    print_summary(CustomResNet(), device, input_size=(3, 32, 32))
+
     model = CustomResNet()
-
-    model_exp = copy.deepcopy(model)
-
-    print_summary(model, device, input_size=(3, 32, 32))
 
     train_loader = cifar10.get_loader(True)
     test_loader = cifar10.get_loader(False)
@@ -89,10 +90,7 @@ def run():
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
     criterion = nn.CrossEntropyLoss()
 
-    min_loss, max_lr = get_lr(model_exp, train_loader, optimizer, criterion, device)
-
-    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
-    criterion = nn.CrossEntropyLoss()
+    min_loss, max_lr = get_lr(model, train_loader, optimizer, criterion, device)
 
     scheduler = OneCycleLR(
         optimizer,
