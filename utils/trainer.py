@@ -41,7 +41,7 @@ class Trainer:
             if use_l1:
                 for p in self.model.parameters():
                     l1 = l1 + p.abs().sum()
-            loss = loss + lambda_l1*l1
+            loss = loss + lambda_l1 * l1
 
             self.train_losses.append(loss.item())
 
@@ -68,4 +68,4 @@ class Trainer:
         self.epoch_train_accuracies.append(100 * correct / processed)
 
         self.lr_history.extend(lr_trend)
-        return 100 * correct / processed, train_loss/(batch_id + 1), lr_trend
+        return 100 * correct / processed, train_loss / (batch_id + 1), lr_trend
