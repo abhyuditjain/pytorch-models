@@ -9,7 +9,16 @@ import torch
 from torch import nn
 
 
-def show_grad_cam(model, device, images, labels, predictions, target_layer, classes, use_cuda=True):
+def show_grad_cam(
+    model,
+    device,
+    images,
+    labels,
+    predictions,
+    target_layer,
+    classes,
+    use_cuda=True,
+):
     """
     model = model,
     device = device,
@@ -35,17 +44,17 @@ def show_grad_cam(model, device, images, labels, predictions, target_layer, clas
         visualization = show_cam_on_image(rgb_img, grayscale_cam, use_rgb=True)
 
         # Layout = 6 images per row - 2 * (original image, gradcam and visualization)
-        ax = fig.add_subplot(len(images)/2, 6, plot_idx, xticks=[], yticks=[])
+        ax = fig.add_subplot(len(images) / 2, 6, plot_idx, xticks=[], yticks=[])
         ax.imshow(rgb_img, cmap="gray")
         ax.set_title("True class: {}".format(classes[labels[i]]))
         plot_idx += 1
 
-        ax = fig.add_subplot(len(images)/2, 6, plot_idx, xticks=[], yticks=[])
+        ax = fig.add_subplot(len(images) / 2, 6, plot_idx, xticks=[], yticks=[])
         ax.imshow(grayscale_cam, cmap="gray")
         ax.set_title("GradCAM Output\nTarget class: {}".format(classes[predictions[i]]))
         plot_idx += 1
 
-        ax = fig.add_subplot(len(images)/2, 6, plot_idx, xticks=[], yticks=[])
+        ax = fig.add_subplot(len(images) / 2, 6, plot_idx, xticks=[], yticks=[])
         ax.imshow(visualization, cmap="gray")
         ax.set_title("Visualization\nTarget class: {}".format(classes[predictions[i]]))
         plot_idx += 1
@@ -72,7 +81,7 @@ def show_training_images(train_loader, count, classes):
 
     fig = plt.figure(figsize=(20, 10))
     for i in range(count):
-        sub = fig.add_subplot(count/5, 5, i+1)
+        sub = fig.add_subplot(count / 5, 5, i + 1)
         npimg = denormalize(images[i].cpu().numpy().squeeze())
         plt.imshow(npimg, cmap="gray")
         sub.set_title("Correct class: {}".format(classes[labels[i]]))
@@ -83,13 +92,15 @@ def show_training_images(train_loader, count, classes):
 def show_misclassified_images(images, predictions, labels, classes):
     fig = plt.figure(figsize=(20, 10))
     for i in range(len(images)):
-        sub = fig.add_subplot(len(images) / 5, 5, i+1)
+        sub = fig.add_subplot(len(images) / 5, 5, i + 1)
         image = images[i]
         npimg = denormalize(image.cpu().numpy().squeeze())
         plt.imshow(npimg, cmap="gray")
         predicted = classes[predictions[i]]
         correct = classes[labels[i]]
-        sub.set_title("Correct class: {}\nPredicted class: {}".format(correct, predicted))
+        sub.set_title(
+            "Correct class: {}\nPredicted class: {}".format(correct, predicted)
+        )
     plt.tight_layout()
     plt.show()
 
@@ -102,26 +113,26 @@ def show_losses_and_accuracies(trainer, tester, epochs):
     train_epoch_acc_linspace = np.linspace(0, epochs, len(trainer.train_accuracies))
     test_epoch_acc_linspace = np.linspace(0, epochs, len(tester.test_accuracies))
 
-    ax[0][0].set_xlabel('Epoch')
-    ax[0][0].set_ylabel('Train Loss')
+    ax[0][0].set_xlabel("Epoch")
+    ax[0][0].set_ylabel("Train Loss")
     ax[0][0].plot(train_epoch_loss_linspace, trainer.train_losses)
-    ax[0][0].tick_params(axis='y', labelleft=True, labelright=True)
+    ax[0][0].tick_params(axis="y", labelleft=True, labelright=True)
 
-    ax[0][1].set_xlabel('Epoch')
-    ax[0][1].set_ylabel('Test Loss')
+    ax[0][1].set_xlabel("Epoch")
+    ax[0][1].set_ylabel("Test Loss")
     ax[0][1].plot(test_epoch_loss_linspace, tester.test_losses)
-    ax[0][1].tick_params(axis='y', labelleft=True, labelright=True)
+    ax[0][1].tick_params(axis="y", labelleft=True, labelright=True)
 
-    ax[1][0].set_xlabel('Epoch')
-    ax[1][0].set_ylabel('Train Accuracy')
+    ax[1][0].set_xlabel("Epoch")
+    ax[1][0].set_ylabel("Train Accuracy")
     ax[1][0].plot(train_epoch_acc_linspace, trainer.train_accuracies)
-    ax[1][0].tick_params(axis='y', labelleft=True, labelright=True)
+    ax[1][0].tick_params(axis="y", labelleft=True, labelright=True)
     ax[1][0].yaxis.set_ticks(np.arange(0, 101, 5))
 
-    ax[1][1].set_xlabel('Epoch')
-    ax[1][1].set_ylabel('Test Accuracy')
+    ax[1][1].set_xlabel("Epoch")
+    ax[1][1].set_ylabel("Test Accuracy")
     ax[1][1].plot(test_epoch_acc_linspace, tester.test_accuracies)
-    ax[1][1].tick_params(axis='y', labelleft=True, labelright=True)
+    ax[1][1].tick_params(axis="y", labelleft=True, labelright=True)
     ax[1][1].yaxis.set_ticks(np.arange(0, 101, 5))
 
     fig.set_size_inches(30, 10)
@@ -129,13 +140,12 @@ def show_losses_and_accuracies(trainer, tester, epochs):
     plt.show()
 
 
-def get_module_by_name(module: Union[torch.Tensor, nn.Module],
-                       access_string: str):
+def get_module_by_name(module: Union[torch.Tensor, nn.Module], access_string: str):
     """Retrieve a module nested in another by its access string.
 
     Works even when there is a Sequential in the module.
     """
-    names = access_string.split(sep='.')
+    names = access_string.split(sep=".")
     return reduce(getattr, names, module)
 
 
@@ -154,10 +164,10 @@ def show_lr_history(trainer, epochs):
 
     linspace = np.linspace(0, epochs, len(trainer.lr_history))
 
-    ax.set_xlabel('Epoch')
-    ax.set_ylabel('Learning Rate')
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Learning Rate")
     ax.plot(linspace, trainer.lr_history)
-    ax.tick_params(axis='y', labelleft=True, labelright=True)
+    ax.tick_params(axis="y", labelleft=True, labelright=True)
 
     # fig.set_size_inches(30, 10)
     plt.tight_layout()
