@@ -67,6 +67,7 @@ class CustomResnetTransforms:
         if train:
             self.transformations = Compose(
                 [
+                    Normalize(mean=means, std=stds, always_apply=True),
                     Sequential(
                         [
                             PadIfNeeded(
@@ -85,7 +86,6 @@ class CustomResnetTransforms:
                         max_holes=1,
                         fill_value=means,
                     ),
-                    Normalize(mean=means, std=stds, always_apply=True),
                     ToTensorV2(),
                 ]
             )
