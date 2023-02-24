@@ -2,7 +2,6 @@ from models.model9 import TransformerModel
 from utils.transforms import CustomResnetTransforms, DefaultTransforms
 from utils.dataloader import Cifar10DataLoader
 from utils.utils import get_device, show_training_images
-from models.custom_resnet import CustomResNet
 from utils.trainer import Trainer
 from utils.tester import Tester
 from utils.summary import print_summary
@@ -140,6 +139,9 @@ def run(epochs: int):
     )
     train_loader = cifar10.get_loader(True)
     test_loader = cifar10.get_loader(False)
+
+    show_training_images(train_loader=train_loader, count=20, classes=cifar10.classes)
+
     scheduler = OneCycleLR(
         optimizer,
         max_lr=max_lr,
