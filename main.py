@@ -1,13 +1,12 @@
-from utils.transforms import CustomResnetTransforms
+from models.model9 import TransformerModel
+from utils.transforms import CustomResnetTransforms, DefaultTransforms
 from utils.dataloader import Cifar10DataLoader
-from utils.utils import get_device
-from models.custom_resnet import CustomResNet
+from utils.utils import get_device, show_training_images
 from utils.trainer import Trainer
 from utils.tester import Tester
 from utils.summary import print_summary
 from torch_lr_finder import LRFinder
 import numpy as np
-import copy
 
 import torch
 import torch.optim as optim
@@ -107,31 +106,51 @@ def get_lr(
     return min_loss, max_lr
 
 
-def run():
+def run(epochs: int):
     is_cuda_available, device = get_device()
-    cifar10 = Cifar10DataLoader(CustomResnetTransforms, 512, is_cuda_available)
 
-    print_summary(CustomResNet(), device, input_size=(3, 32, 32))
+    print_summary(TransformerModel(), device, input_size=(3, 32, 32))
 
-    model = CustomResNet()
+    model = TransformerModel()
+    cifar10 = Cifar10DataLoader(
+        DefaultTransforms,
+        512,
+        is_cuda_available,
+        shuffle=False,
+    )
+    train_loader = cifar10.get_loader(True)
+    optimizer = optim.Adam(model.parameters(), lr=1e-7)
+    criterion = nn.CrossEntropyLoss()
 
+    min_loss, max_lr = get_lr(
+        model=model,
+        train_loader=train_loader,
+        optimizer=optimizer,
+        criterion=criterion,
+        device=device,
+        end_lr=0.001,
+        num_iter=200,
+    )
+
+    cifar10 = Cifar10DataLoader(
+        CustomResnetTransforms,
+        512,
+        is_cuda_available,
+    )
     train_loader = cifar10.get_loader(True)
     test_loader = cifar10.get_loader(False)
 
-    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
-    criterion = nn.CrossEntropyLoss()
-
-    min_loss, max_lr = get_lr(model, train_loader, optimizer, criterion, device)
+    show_training_images(train_loader=train_loader, count=20, classes=cifar10.classes)
 
     scheduler = OneCycleLR(
         optimizer,
         max_lr=max_lr,
         steps_per_epoch=len(train_loader),
-        epochs=24,
-        pct_start=5 / 24,
+        epochs=epochs,
+        pct_start=5 / epochs,
         div_factor=100,
         three_phase=False,
-        final_div_factor=100,
+        final_div_factor=1000,
         anneal_strategy="linear",
     )
 
@@ -142,4 +161,4 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    run(epochs=24)
